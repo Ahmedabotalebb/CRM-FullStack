@@ -10,9 +10,17 @@
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.31" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Persistence\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\Presentation\Presentation\Presentation.csproj" />
   </ItemGroup>
 
 </Project>
