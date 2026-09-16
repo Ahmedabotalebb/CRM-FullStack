@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class IntealCreate : Migration
+    public partial class IntaelCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,14 +15,13 @@ namespace Persistence.Migrations
                 name: "Contacts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    Company = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
-                    JobTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Company = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    JobTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -50,6 +49,7 @@ namespace Persistence.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -75,10 +75,9 @@ namespace Persistence.Migrations
                 name: "Deals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    ContactId = table.Column<int>(type: "int", nullable: false),
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Stage = table.Column<int>(type: "int", nullable: false),
                     ExpectedCloseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -100,6 +99,30 @@ namespace Persistence.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedByIp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RevokedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReplacedByToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,14 +153,13 @@ namespace Persistence.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    ContactId = table.Column<int>(type: "int", nullable: true),
-                    DealId = table.Column<int>(type: "int", nullable: true),
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DealId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssignedToUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -149,13 +171,13 @@ namespace Persistence.Migrations
                         column: x => x.ContactId,
                         principalTable: "Contacts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tasks_Deals_DealId",
                         column: x => x.DealId,
                         principalTable: "Deals",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tasks_Users_AssignedToUserId",
                         column: x => x.AssignedToUserId,
@@ -173,6 +195,11 @@ namespace Persistence.Migrations
                 name: "IX_Deals_OwnerId",
                 table: "Deals",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -217,6 +244,9 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "RefreshToken");
+
             migrationBuilder.DropTable(
                 name: "Tasks");
 

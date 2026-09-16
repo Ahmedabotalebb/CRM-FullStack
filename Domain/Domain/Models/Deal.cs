@@ -15,12 +15,12 @@ namespace MiniCRM.API.Models
 
     public class Deal
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         [Required, MaxLength(150)]
         public string Title { get; set; } = string.Empty;
 
-        public int ContactId { get; set; }
+        public Guid ContactId { get; set; }
         public Contact? Contact { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]

@@ -90,6 +90,9 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -138,13 +141,12 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("MiniCRM.API.Models.Contact", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Company")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
@@ -152,6 +154,7 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
@@ -161,6 +164,7 @@ namespace Persistence.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("JobTitle")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -170,6 +174,7 @@ namespace Persistence.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
@@ -180,17 +185,15 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("MiniCRM.API.Models.Deal", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ContactId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ContactId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -219,26 +222,60 @@ namespace Persistence.Migrations
                     b.ToTable("Deals");
                 });
 
+            modelBuilder.Entity("MiniCRM.API.Models.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("MiniCRM.API.Models.TaskItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AssignedToUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ContactId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ContactId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DealId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DealId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -299,6 +336,17 @@ namespace Persistence.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("MiniCRM.API.Models.RefreshToken", b =>
+                {
+                    b.HasOne("MiniCRM.API.Models.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MiniCRM.API.Models.TaskItem", b =>
                 {
                     b.HasOne("MiniCRM.API.Models.ApplicationUser", "AssignedToUser")
@@ -310,18 +358,25 @@ namespace Persistence.Migrations
                     b.HasOne("MiniCRM.API.Models.Contact", "Contact")
                         .WithMany("Tasks")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("MiniCRM.API.Models.Deal", "Deal")
                         .WithMany("Tasks")
                         .HasForeignKey("DealId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("AssignedToUser");
 
                     b.Navigation("Contact");
 
                     b.Navigation("Deal");
+                });
+
+            modelBuilder.Entity("MiniCRM.API.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("MiniCRM.API.Models.Contact", b =>

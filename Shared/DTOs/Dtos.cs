@@ -3,30 +3,104 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System;
+using MiniCRM.API.Models;
+using System.ComponentModel.DataAnnotations;
 namespace Shared.DTOs
 {
-    public class RegisterDto
+  
+    public class ContactDto
     {
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string Role { get; set; } = "SalesRep"; 
+        public Guid Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public string? Company { get; set; }
+        public string? JobTitle { get; set; }
     }
 
-    public class LoginDto
+    public class ContactCreateDto
     {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        [EmailAddress]
+        public string Email { get; set; } = default!;
+        [Phone]
+        public string Phone { get; set; } = default!;
+        public string Company { get; set; } = default!;
+        public string JobTitle { get; set; } = default!;
     }
 
-    public class AuthResponseDto
+    // ---------- Deal ----------
+    public class DealDto
     {
-        public string Token { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public Guid ContactId { get; set; }
+        public string? ContactName { get; set; }
+        public decimal Amount { get; set; }
+        public DealStage Stage { get; set; }
+        public DateTime? ExpectedCloseDate { get; set; }
+        public string OwnerId { get; set; } = string.Empty;
+        public string? OwnerName { get; set; }
     }
 
- 
+    public class DealCreateDto
+    {
+        public string Title { get; set; } = string.Empty;
+        public Guid ContactId { get; set; }
+        public decimal Amount { get; set; }
+        public DealStage Stage { get; set; } = DealStage.New;
+        public DateTime? ExpectedCloseDate { get; set; }
+        public string OwnerId { get; set; } = string.Empty;
+    }
+
+    public class DealStageUpdateDto
+    {
+        public DealStage Stage { get; set; }
+    }
+
+    // ---------- Task ----------
+    public class TaskDto
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public DateTime DueDate { get; set; }
+        public bool IsCompleted { get; set; }
+        public Guid? ContactId { get; set; }
+        public Guid? DealId { get; set; }
+        public string AssignedToUserId { get; set; } = string.Empty;
+        public string? AssignedToName { get; set; }
+    }
+
+    public class TaskCreateDto
+    {
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public DateTime DueDate { get; set; }
+        public Guid? ContactId { get; set; }
+        public Guid? DealId { get; set; }
+        public string AssignedToUserId { get; set; } = string.Empty;
+    }
+
+    // ---------- Reports ----------
+    public class PipelineByStageDto
+    {
+        public string Stage { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public decimal TotalAmount { get; set; }
+    }
+
+    public class DashboardSummaryDto
+    {
+        public int TotalContacts { get; set; }
+        public int TotalOpenDeals { get; set; }
+        public decimal OpenPipelineValue { get; set; }
+        public decimal WonThisMonth { get; set; }
+        public int OverdueTasks { get; set; }
+        public List<PipelineByStageDto> PipelineByStage { get; set; } = new();
+    }
 }
+ 

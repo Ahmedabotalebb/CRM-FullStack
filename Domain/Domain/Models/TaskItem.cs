@@ -4,7 +4,7 @@ namespace MiniCRM.API.Models
 {
     public class TaskItem
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         [Required, MaxLength(200)]
         public string Title { get; set; } = string.Empty;
@@ -15,11 +15,11 @@ namespace MiniCRM.API.Models
 
         public bool IsCompleted { get; set; } = false;
 
-        public int? ContactId { get; set; }
-        public Contact? Contact { get; set; }
+        public Guid ContactId { get; set; } 
+        public Contact Contact { get; set; }
 
-        public int? DealId { get; set; }
-        public Deal? Deal { get; set; }
+        public Guid DealId { get; set; }
+        public Deal Deal { get; set; }
 
         [Required]
         public string AssignedToUserId { get; set; } = string.Empty;

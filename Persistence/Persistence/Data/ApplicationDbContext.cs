@@ -46,13 +46,13 @@ namespace Persistence.Data
                 .HasOne(t => t.Contact)
                 .WithMany(c => c.Tasks)
                 .HasForeignKey(t => t.ContactId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TaskItem>()
                 .HasOne(t => t.Deal)
                 .WithMany(d => d.Tasks)
                 .HasForeignKey(t => t.DealId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TaskItem>()
                 .HasOne(t => t.AssignedToUser)

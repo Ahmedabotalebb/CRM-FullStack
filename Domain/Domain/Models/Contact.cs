@@ -4,25 +4,27 @@ namespace MiniCRM.API.Models
 {
     public class Contact
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } =new Guid();
 
         [Required, MaxLength(100)]
-        public string FirstName { get; set; } = string.Empty;
+        public string FirstName { get; set; } = default!;
 
         [Required, MaxLength(100)]
-        public string LastName { get; set; } = string.Empty;
+        public string LastName { get; set; } = default!;
 
         [MaxLength(150)]
-        public string? Email { get; set; }
+        [EmailAddress]
+        public string Email { get; set; } = default!;
 
         [MaxLength(30)]
-        public string? Phone { get; set; }
+        [Phone]
+        public string Phone { get; set; } = default!;
 
         [MaxLength(150)]
-        public string? Company { get; set; }
+        public string Company { get; set; } = default!;
 
         [MaxLength(100)]
-        public string? JobTitle { get; set; }
+        public string JobTitle { get; set; } = default!;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
