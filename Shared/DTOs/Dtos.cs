@@ -1,11 +1,12 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System;
 using MiniCRM.API.Models;
-using System.ComponentModel.DataAnnotations;
+using static MiniCRM.API.Models.TaskItem;
 namespace Shared.DTOs
 {
   
@@ -62,31 +63,75 @@ namespace Shared.DTOs
     }
 
     // ---------- Task ----------
+
     public class TaskDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public DateTime DueDate { get; set; }
-        public bool IsCompleted { get; set; }
-        public Guid? ContactId { get; set; }
-        public Guid? DealId { get; set; }
+        public bool IsCompleted { get; set; } 
+        public DateTime? CompletedAt { get; set; }
+        public TaskPriority Priority { get; set; }
+        public string PriorityName { get; set; } = string.Empty;
+
+        public Guid ContactId { get; set; }
+        public string? ContactName { get; set; }
+
+        public Guid DealId { get; set; }
+        public string? DealTitle { get; set; }
+
         public string AssignedToUserId { get; set; } = string.Empty;
         public string? AssignedToName { get; set; }
+
+        public bool IsOverdue { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 
     public class TaskCreateDto
     {
+        [Required]
+        [MaxLength(200)]
         public string Title { get; set; } = string.Empty;
+
         public string? Description { get; set; }
+
+        [Required]
         public DateTime DueDate { get; set; }
+        public bool IsCompleted { get; set; } 
+        public DateTime? CompletedAt { get; set; }
+
+        public TaskPriority Priority { get; set; } = TaskPriority.Medium;
+
         public Guid? ContactId { get; set; }
         public Guid? DealId { get; set; }
+        public bool IsOverdue { get; set; }
+
+        [Required(ErrorMessage = "")]
         public string AssignedToUserId { get; set; } = string.Empty;
     }
 
-    // ---------- Reports ----------
-    public class PipelineByStageDto
+    public class TaskUpdateDto : TaskCreateDto { }
+
+    public class TaskFilterDto
+    {
+        public string? Search { get; set; }
+        public bool? IsCompleted { get; set; }
+        public bool? IsOverdue { get; set; }
+        public TaskPriority? Priority { get; set; }
+        public Guid? ContactId { get; set; }
+        public Guid? DealId { get; set; }
+        public string? AssignedToUserId { get; set; }
+        public DateTime? DueBefore { get; set; }
+        public DateTime? DueAfter { get; set; }
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 20;
+    }
+}
+
+// ---------- Reports ----------
+public class PipelineByStageDto
     {
         public string Stage { get; set; } = string.Empty;
         public int Count { get; set; }
@@ -102,5 +147,12 @@ namespace Shared.DTOs
         public int OverdueTasks { get; set; }
         public List<PipelineByStageDto> PipelineByStage { get; set; } = new();
     }
+public class PagedResultDto<T>
+{
+    public IEnumerable<T> Items { get; set; } = new List<T>();
+    public int TotalCount { get; set; }
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
 }
- 
+

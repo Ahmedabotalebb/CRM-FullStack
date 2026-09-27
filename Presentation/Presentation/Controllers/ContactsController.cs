@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceApsraction;
-using Shared.DTOs;
+    using Shared.DTOs;
 
 namespace Presentation.Controllers
 {
-    //[Authorize]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class ContactsController(IContactService _contactService) : ControllerBase
@@ -52,7 +52,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("Delete{id}")]
-        [Authorize(Roles = "Admin,Manager")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var (success, error) = await _contactService.DeleteAsync(id);

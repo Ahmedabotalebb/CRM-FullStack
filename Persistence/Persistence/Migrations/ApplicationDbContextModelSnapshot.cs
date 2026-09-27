@@ -268,13 +268,16 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("ContactId")
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ContactId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DealId")
+                    b.Property<Guid?>("DealId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -286,10 +289,16 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -358,14 +367,12 @@ namespace Persistence.Migrations
                     b.HasOne("MiniCRM.API.Models.Contact", "Contact")
                         .WithMany("Tasks")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniCRM.API.Models.Deal", "Deal")
                         .WithMany("Tasks")
                         .HasForeignKey("DealId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AssignedToUser");
 

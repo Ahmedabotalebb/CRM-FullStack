@@ -4,27 +4,40 @@ namespace MiniCRM.API.Models
 {
     public class TaskItem
     {
-        public Guid Id { get; set; } = new Guid();
 
-        [Required, MaxLength(200)]
-        public string Title { get; set; } = string.Empty;
+        public enum TaskPriority
+        {
+            Low = 0,
+            Medium = 1,
+            High = 2
+        }
 
-        public string? Description { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        public DateTime DueDate { get; set; }
+            [Required, MaxLength(200)]
+            public string Title { get; set; } = string.Empty;
 
-        public bool IsCompleted { get; set; } = false;
+            public string? Description { get; set; }
 
-        public Guid ContactId { get; set; } 
-        public Contact Contact { get; set; }
+            public DateTime DueDate { get; set; }
 
-        public Guid DealId { get; set; }
-        public Deal Deal { get; set; }
+            public bool IsCompleted { get; set; } 
+            public DateTime? CompletedAt { get; set; }
 
-        [Required]
-        public string AssignedToUserId { get; set; } = string.Empty;
-        public ApplicationUser? AssignedToUser { get; set; }
+            public TaskPriority Priority { get; set; } = TaskPriority.Medium;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+            public Guid? ContactId { get; set; }
+            public Contact? Contact { get; set; }
+
+            public Guid? DealId { get; set; }
+            public Deal? Deal { get; set; }
+
+            [Required]
+            public string AssignedToUserId { get; set; } = string.Empty;
+            public ApplicationUser? AssignedToUser { get; set; }
+
+            public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+        }
     }
-}
+

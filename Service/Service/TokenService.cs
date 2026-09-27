@@ -55,7 +55,6 @@ namespace Service
 
         public string GenerateRefreshTokenString()
         {
-            // 64 byte من الـ random cryptographic generator، محوّل لـ base64 عشان يبقى نص آمن للنقل
             var randomBytes = RandomNumberGenerator.GetBytes(64);
             return Convert.ToBase64String(randomBytes);
         }

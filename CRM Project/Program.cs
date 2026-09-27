@@ -96,9 +96,12 @@ namespace CRM_Project
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserManagementService, UserManagementService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+            builder.Services.AddScoped<ITaskService, TaskService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             builder.Services.AddAutoMapper(X => X.AddProfile(new ContactProfile(builder.Configuration)));
+            builder.Services.AddAutoMapper(X => X.AddProfile(new TaskProfile(builder.Configuration)));
 
 
 
