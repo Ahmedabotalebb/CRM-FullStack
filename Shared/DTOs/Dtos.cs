@@ -138,15 +138,49 @@ public class PipelineByStageDto
         public decimal TotalAmount { get; set; }
     }
 
-    public class DashboardSummaryDto
-    {
-        public int TotalContacts { get; set; }
-        public int TotalOpenDeals { get; set; }
-        public decimal OpenPipelineValue { get; set; }
-        public decimal WonThisMonth { get; set; }
-        public int OverdueTasks { get; set; }
-        public List<PipelineByStageDto> PipelineByStage { get; set; } = new();
-    }
+public class DashboardSummaryDto
+{
+    public int TotalContacts { get; set; }
+    public int TotalDeals { get; set; }
+
+    public int OpenDealsCount { get; set; }
+    public decimal OpenPipelineValue { get; set; }
+
+    public int WonDealsThisMonthCount { get; set; }
+    public decimal WonDealsThisMonthValue { get; set; }
+    public int LostDealsThisMonthCount { get; set; }
+
+    public int OverdueTasksCount { get; set; }
+    public int TasksDueTodayCount { get; set; }
+
+    public List<PipelineByStageDto> PipelineByStage { get; set; } = new();
+}
+public class MonthlyTrendDto
+{
+    public string Month { get; set; } = string.Empty;       
+    public string MonthLabel { get; set; } = string.Empty;  
+    public int WonCount { get; set; }
+    public decimal WonAmount { get; set; }
+    public int LostCount { get; set; }
+    public decimal LostAmount { get; set; }
+}
+
+public class TopPerformerDto
+{
+    public string OwnerId { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public int WonDealsCount { get; set; }
+    public decimal TotalWonAmount { get; set; }
+}
+
+public class TaskStatsDto
+{
+    public int TotalTasks { get; set; }
+    public int CompletedTasks { get; set; }
+    public int PendingTasks { get; set; }
+    public int OverdueTasks { get; set; }
+}
+
 public class PagedResultDto<T>
 {
     public IEnumerable<T> Items { get; set; } = new List<T>();

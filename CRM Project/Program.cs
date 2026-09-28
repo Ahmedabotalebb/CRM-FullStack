@@ -100,8 +100,11 @@ namespace CRM_Project
             builder.Services.AddScoped<ITaskService, TaskService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            builder.Services.AddScoped<IReportService, ReportService>();
             builder.Services.AddAutoMapper(X => X.AddProfile(new ContactProfile(builder.Configuration)));
             builder.Services.AddAutoMapper(X => X.AddProfile(new TaskProfile(builder.Configuration)));
+            builder.Services.AddAutoMapper(X => X.AddProfile(new ReportProfile(builder.Configuration)));
 
 
 
